@@ -2,6 +2,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
+/* internal source */
+import Home from './components/Home';
+import Admin from './components/Admin';
+import Movie from './components/Movie';
+
 /* style */
 import './App.css';
 
@@ -40,18 +45,6 @@ function App() {
 			</div>
 		</Router>
 	);
-}
-
-function Home() {
-	return <h1>Home</h1>;
-}
-
-function Movie() {
-	return <h1>Movies</h1>;
-}
-
-function Admin() {
-	return <h1>Admin</h1>;
 }
 
 export default App;
