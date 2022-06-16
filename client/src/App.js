@@ -6,6 +6,7 @@ import {
 	Route,
 	Link,
 	useParams,
+	useLocation,
 } from 'react-router-dom';
 
 /* internal source */
@@ -32,6 +33,9 @@ function App() {
 									<Link to='/'>Home</Link>
 								</li>
 								<li className='list-group-item'>
+									<Link to='/category'>Categories</Link>
+								</li>
+								<li className='list-group-item'>
 									<Link to='/movies'>Movies</Link>
 								</li>
 								<li className='list-group-item'>
@@ -42,6 +46,8 @@ function App() {
 					</div>
 					<div className='col-9'>
 						<Routes>
+							<Route exact path='/category/:category' element={<Category />} />
+							<Route exact path='/category' element={<Categories />} />
 							<Route path='/movies/:id' element={<Movie />} />
 							<Route path='/movies' element={<Movies />} />
 							<Route path='/admin' element={<Admin />} />
@@ -58,5 +64,27 @@ const Movie = () => {
 	let { id } = useParams();
 	return <h2>Movie id {id}</h2>;
 };
+
+const Categories = () => {
+	let { pathname } = useLocation();
+
+	return (
+		<>
+			<h2>Categories</h2>
+
+			<ul>
+				<li><Link to={`${pathname}/comedy`}>Comedy</Link></li>
+				<li><Link to={`${pathname}/drama`}>Drama</Link></li>
+			</ul>
+		</>
+	)
+}
+
+const Category = () => {
+	let { category } = useParams();
+	return (
+		<h2>Category: {category}</h2>
+	)
+}
 
 export default App;
