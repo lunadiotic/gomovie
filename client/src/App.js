@@ -1,11 +1,17 @@
 /* third party */
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import {
+	BrowserRouter as Router,
+	Routes,
+	Route,
+	Link,
+	useParams,
+} from 'react-router-dom';
 
 /* internal source */
 import Home from './components/Home';
 import Admin from './components/Admin';
-import Movie from './components/Movie';
+import Movies from './components/Movie';
 
 /* style */
 import './App.css';
@@ -36,8 +42,9 @@ function App() {
 					</div>
 					<div className='col-9'>
 						<Routes>
+							<Route path='/movies/:id' element={<Movie />} />
+							<Route path='/movies' element={<Movies />} />
 							<Route path='/admin' element={<Admin />} />
-							<Route path='/movies' element={<Movie />} />
 							<Route path='/' element={<Home />} />
 						</Routes>
 					</div>
@@ -46,5 +53,10 @@ function App() {
 		</Router>
 	);
 }
+
+const Movie = () => {
+	let { id } = useParams();
+	return <h2>Movie id {id}</h2>;
+};
 
 export default App;
