@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"time"
 )
 
 const version = "1.0.0"
@@ -21,6 +23,11 @@ type AppStatus struct {
 	Version     string `json:"version"`
 }
 
+type application struct {
+	config config
+	logger *log.Logger
+}
+
 func main() {
 	var cfg config
 
@@ -28,10 +35,16 @@ func main() {
 	flag.StringVar(&cfg.env, "env", "development", "Application environment (development|production)")
 	flag.Parse()
 
+	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
+
+	app := &application{
+		config: cfg,
+		logger: logger,
+	}
+
 	fmt.Println("Running")
 
 	http.HandleFunc("/status", func(w http.ResponseWriter, r *http.Request) {
-		// fmt.Fprint(w, "status")
 		currentStatus := AppStatus{
 			Status:      "Available",
 			Environment: cfg.env,
@@ -48,7 +61,17 @@ func main() {
 		w.Write(js)
 	})
 
-	err := http.ListenAndServe(fmt.Sprintf(":%d", cfg.port), nil)
+	srv := &http.Server{
+		Addr:         fmt.Sprintf(":%d", cfg.port),
+		Handler:      app.routes(),
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 30 * time.Second,
+	}
+
+	logger.Printf("Starting server on port", cfg.port)
+
+	err := srv.ListenAndServe()
 	if err != nil {
 		log.Println(err)
 	}
