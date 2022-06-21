@@ -13,6 +13,7 @@ import {
 import Home from './components/Home';
 import Admin from './components/Admin';
 import Movies from './components/Movie';
+import MovieDetail from './components/MovieDetail';
 
 /* style */
 import './App.css';
@@ -48,7 +49,7 @@ function App() {
 						<Routes>
 							<Route exact path='/category/:category' element={<Category />} />
 							<Route exact path='/category' element={<Categories />} />
-							<Route path='/movies/:id' element={<Movie />} />
+							<Route path='/movies/:id' element={<MovieDetail />} />
 							<Route path='/movies' element={<Movies />} />
 							<Route path='/admin' element={<Admin />} />
 							<Route path='/' element={<Home />} />
@@ -59,11 +60,6 @@ function App() {
 		</Router>
 	);
 }
-
-const Movie = () => {
-	let { id } = useParams();
-	return <h2>Movie id {id}</h2>;
-};
 
 const Categories = () => {
 	let { pathname } = useLocation();
