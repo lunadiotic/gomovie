@@ -18,7 +18,6 @@ func (app *application) getOneMovie(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.logger.Println("id is", id)
 	movie, err := app.models.DB.Get(id)
 
 	err = app.writeJSON(w, http.StatusOK, movie, "movie")
@@ -40,4 +39,20 @@ func (app *application) getAllMovies(w http.ResponseWriter, r *http.Request) {
 		app.errorJSON(w, err)
 		return
 	}
+}
+
+func (app *application) searchMovie(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (app *application) insertMovie(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (app *application) updateMovie(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (app *application) deleteMovie(w http.ResponseWriter, r *http.Request) {
+
 }
