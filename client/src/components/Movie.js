@@ -1,27 +1,36 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Movies = () => {
 	const [movies, setMovies] = useState([]);
+	const [loaded, setLoaded] = useState(false);
 
 	useEffect(() => {
-		setMovies([
-			{ id: 1, title: 'Spongebob Squarepants', runtime: 145 },
-			{ id: 2, title: 'Ogry', runtime: 145 },
-			{ id: 3, title: 'Chalk Zone', runtime: 145 },
-		]);
+		// setMovies([]);
+		const fetchMovie = async () => {
+			const result = await axios(`http://localhost:4000/movies`);
+			// console.log(result.data.movies);
+			await setMovies(result.data.movies);
+			setLoaded(true);
+		};
+		fetchMovie();
 	}, []);
 
 	return (
 		<Fragment>
 			<h2>Choose a movie</h2>
-			<ul>
-				{movies.map((movie) => (
-					<li>
-						<Link to={`/movies/${movie.id}`}>{movie.title}</Link>
-					</li>
-				))}
-			</ul>
+			{!loaded ? (
+				<p>Loading...</p>
+			) : (
+				<ul>
+					{movies.map((movie) => (
+						<li key={movie.id}>
+							<Link to={`/movies/${movie.id}`}>{movie.title}</Link>
+						</li>
+					))}
+				</ul>
+			)}
 		</Fragment>
 	);
 };
