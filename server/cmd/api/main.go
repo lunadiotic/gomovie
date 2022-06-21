@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"server/models"
 	"time"
 
 	_ "github.com/lib/pq"
@@ -33,6 +34,7 @@ type AppStatus struct {
 type application struct {
 	config config
 	logger *log.Logger
+	models models.Models
 }
 
 func main() {
@@ -54,6 +56,7 @@ func main() {
 	app := &application{
 		config: cfg,
 		logger: logger,
+		models: models.NewModels(db),
 	}
 
 	fmt.Println("Running")
