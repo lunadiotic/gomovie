@@ -1,5 +1,7 @@
+/* third party */
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Genre = () => {
 	const [genres, setGenres] = useState([]);
@@ -7,11 +9,9 @@ const Genre = () => {
 	const [errorMessage, setErrorMessage] = useState(null);
 
     useEffect(() => {
-		// setMovies([]);
 		const fetchGenres = async () => {
 			try {
 				const result = await axios(`http://localhost:4000/genres`);
-				// console.log(result.data.movies);
 				await setGenres(result.data.genres);
 				setLoaded(true);
 			} catch (err) {
@@ -35,10 +35,12 @@ const Genre = () => {
 				
 			: (
 				<ul>
-                    <li>Comedy</li>
-                    <li>Drama</li>
-                    <li>Crime</li>
-                </ul>
+					{genres.map((genre) => (
+						<li key={genre.id}>
+							<Link to={`#`}>{genre.genre_name}</Link>
+						</li>
+					))}
+				</ul>
 			)}
 		</>
 	);
