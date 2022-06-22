@@ -35,7 +35,7 @@ const Genre = () => {
 				<ul>
 					{genres.map((genre) => (
 						<li key={genre.id}>
-							<Link to={`/genres/${genre.id}`}>{genre.genre_name}</Link>
+							<Link to={`/genres/${genre.id}`} state={{ genre_name: genre.genre_name }}>{genre.genre_name}</Link>
 						</li>
 					))}
 				</ul>

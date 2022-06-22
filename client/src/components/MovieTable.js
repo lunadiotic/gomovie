@@ -1,8 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const MovieTable = ({ movie }) => {
 	if (movie.genres) {
-		movie.genres = Object.values(movie.genres);
+		movie.genres = Object.entries(movie.genres).map(([key, value]) => ([key,value]));
 	} else {
 		movie.genres = [];
 	}
@@ -16,8 +17,9 @@ const MovieTable = ({ movie }) => {
 				<small>Rating: {movie.mpaa_rating}</small>
 			</div>
 			<div className='float-end'>
-				{movie.genres.map((m, index) => (
-					<span className='badge bg-secondary me-1' key={index}>{m}</span>
+				{movie.genres.map((genre, index) => (
+					// <span className='badge bg-secondary me-1' key={index}>{m}</span>
+					<Link className='badge bg-secondary me-1' to={`/genres/${genre[0]}`} state={{ genre_name: genre[1]}}  key={index}>{genre[1]}</Link>
 				))}
 			</div>
             <div className="clearfix"></div>
