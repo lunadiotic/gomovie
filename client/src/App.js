@@ -13,6 +13,7 @@ import Admin from './components/Admin';
 import Movies from './components/Movie';
 import MovieDetail from './components/MovieDetail';
 import Genre from './components/Genre';
+import GenreDetail from './components/GenreDetail';
 
 /* style */
 import './App.css';
@@ -46,6 +47,7 @@ function App() {
 					</div>
 					<div className='col-9'>
 						<Routes>
+							<Route exact path='/genres/:id' element={<GenreDetail />} />
 							<Route exact path='/genres' element={<Genre />} />
 							<Route path='/movies/:id' element={<MovieDetail />} />
 							<Route path='/movies' element={<Movies />} />
