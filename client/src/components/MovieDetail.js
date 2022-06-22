@@ -22,20 +22,18 @@ const MovieDetail = () => {
 			}
 		};
 		fetchMovie();
-	}, []);
+	}, [id]);
 	return (
 		<Fragment>
-            {!loaded ? 
-				
+			{!loaded ? (
 				(() => {
 					if (errorMessage) {
-						return <h5>Oops... {errorMessage}</h5>
+						return <h5>Oops... {errorMessage}</h5>;
 					} else {
-						return <p>Loading...</p>
+						return <p>Loading...</p>;
 					}
 				})()
-				
-			: (
+			) : (
 				<MovieTable movie={movie} />
 			)}
 		</Fragment>

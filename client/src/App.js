@@ -5,8 +5,6 @@ import {
 	Routes,
 	Route,
 	Link,
-	useParams,
-	useLocation,
 } from 'react-router-dom';
 
 /* internal source */
@@ -14,6 +12,7 @@ import Home from './components/Home';
 import Admin from './components/Admin';
 import Movies from './components/Movie';
 import MovieDetail from './components/MovieDetail';
+import Genre from './components/Genre';
 
 /* style */
 import './App.css';
@@ -34,7 +33,7 @@ function App() {
 									<Link to='/'>Home</Link>
 								</li>
 								<li className='list-group-item'>
-									<Link to='/category'>Categories</Link>
+									<Link to='/genres'>Genres</Link>
 								</li>
 								<li className='list-group-item'>
 									<Link to='/movies'>Movies</Link>
@@ -47,8 +46,7 @@ function App() {
 					</div>
 					<div className='col-9'>
 						<Routes>
-							<Route exact path='/category/:category' element={<Category />} />
-							<Route exact path='/category' element={<Categories />} />
+							<Route exact path='/genres' element={<Genre />} />
 							<Route path='/movies/:id' element={<MovieDetail />} />
 							<Route path='/movies' element={<Movies />} />
 							<Route path='/admin' element={<Admin />} />
@@ -59,28 +57,6 @@ function App() {
 			</div>
 		</Router>
 	);
-}
-
-const Categories = () => {
-	let { pathname } = useLocation();
-
-	return (
-		<>
-			<h2>Categories</h2>
-
-			<ul>
-				<li><Link to={`${pathname}/comedy`}>Comedy</Link></li>
-				<li><Link to={`${pathname}/drama`}>Drama</Link></li>
-			</ul>
-		</>
-	)
-}
-
-const Category = () => {
-	let { category } = useParams();
-	return (
-		<h2>Category: {category}</h2>
-	)
 }
 
 export default App;
