@@ -32,13 +32,17 @@ const Genre = () => {
 					}
 				})()
 			) : (
-				<ul>
+				<div className='row'>
 					{genres.map((genre) => (
-						<li key={genre.id}>
-							<Link to={`/genres/${genre.id}`} state={{ genre_name: genre.genre_name }}>{genre.genre_name}</Link>
-						</li>
+						<div className='col-sm-2 mb-3'>
+							<div className='card'>
+								<div class="card-body text-center">
+								<Link to={`/genres/${genre.id}`} state={{ genre_name: genre.genre_name }}>{genre.genre_name}</Link>
+								</div>
+							</div>
+						</div>
 					))}
-				</ul>
+				</div>
 			)}
 		</>
 	);

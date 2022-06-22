@@ -5,7 +5,7 @@ import axios from 'axios';
 const Movies = () => {
 	const [movies, setMovies] = useState([]);
 	const [loaded, setLoaded] = useState(false);
-	const [errorMessage, setErrorMessage] = useState(null)
+	const [errorMessage, setErrorMessage] = useState(null);
 
 	useEffect(() => {
 		// setMovies([]);
@@ -16,7 +16,7 @@ const Movies = () => {
 				await setMovies(result.data.movies);
 				setLoaded(true);
 			} catch (err) {
-				setErrorMessage(err.response.data)
+				setErrorMessage(err.response.data);
 			}
 		};
 		fetchMovie();
@@ -25,25 +25,31 @@ const Movies = () => {
 	return (
 		<Fragment>
 			<h2>Choose a movie</h2>
-			
-			{!loaded ? 
-				
+
+			{!loaded ? (
 				(() => {
 					if (errorMessage) {
-						return <h5>Oops... {errorMessage}</h5>
+						return <h5>Oops... {errorMessage}</h5>;
 					} else {
-						return <p>Loading...</p>
+						return <p>Loading...</p>;
 					}
 				})()
-				
-			: (
-				<ul>
+			) : (
+				<div className='row'>
 					{movies.map((movie) => (
-						<li key={movie.id}>
-							<Link to={`/movies/${movie.id}`}>{movie.title}</Link>
-						</li>
+						<div className='col-sm-4 mb-3'>
+							<div className='card'>
+								<div className='card-body'>
+									<h5 className='card-title'>{movie.title}</h5>
+									<p className='card-text'>{movie.description}</p>
+									<Link to={`/movies/${movie.id}`} className='btn btn-primary'>
+										Read More
+									</Link>
+								</div>
+							</div>
+						</div>
 					))}
-				</ul>
+				</div>
 			)}
 		</Fragment>
 	);
