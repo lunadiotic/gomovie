@@ -14,10 +14,21 @@ const MovieForm = () => {
 	const [loaded, setLoaded] = useState(false);
 	const [errorMessage, setErrorMessage] = useState(null);
 
+	const handleChange = (event) => {
+		const { name, value } = event.target;
+		setMovie((prevState) => {
+			return {
+				...prevState,
+				[name]: value,
+			};
+		});
+	};
+
 	return (
 		<>
 			<h2>Movie</h2>
 			<hr />
+			<pre>{JSON.stringify(movie)}</pre>
 			<form action='post'>
 				<div className='mb-3'>
 					<label htmlFor='' className='form-label'>
@@ -29,6 +40,7 @@ const MovieForm = () => {
 						id='title'
 						name='title'
 						value={movie.title}
+						onChange={handleChange}
 					/>
 				</div>
 				<div className='mb-3'>
@@ -41,6 +53,7 @@ const MovieForm = () => {
 						id='release_date'
 						name='release_date'
 						value={movie.release_date}
+						onChange={handleChange}
 					/>
 				</div>
 				<div className='mb-3'>
@@ -53,6 +66,7 @@ const MovieForm = () => {
 						id='runtime'
 						name='runtime'
 						value={movie.runtime}
+						onChange={handleChange}
 					/>
 				</div>
 				<div className='mb-3'>
@@ -64,6 +78,7 @@ const MovieForm = () => {
 						id='mpaa_rating'
 						className='form-control'
 						value={movie.mpaa_rating}
+						onChange={handleChange}
 					>
 						<option value='' className='form-select'>
 							Choose...
@@ -95,6 +110,7 @@ const MovieForm = () => {
 						id='rating'
 						name='rating'
 						value={movie.rating}
+						onChange={handleChange}
 					/>
 				</div>
 				<div className='mb-3'>
@@ -107,6 +123,7 @@ const MovieForm = () => {
 						id='description'
 						name='description'
 						value={movie.description}
+						onChange={handleChange}
 					/>
 				</div>
 				<hr />
