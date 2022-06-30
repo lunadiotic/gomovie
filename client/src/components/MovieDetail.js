@@ -11,17 +11,25 @@ const MovieDetail = () => {
 	const [errorMessage, setErrorMessage] = useState(null);
 
 	useEffect(() => {
-		const fetchMovie = async () => {
-			try {
-				const result = await axios(`http://localhost:4000/movies/${id}`);
-				// console.log(result.data.movies);
-				await setMovie(result.data.movie);
-				setLoaded(true);
-			} catch (err) {
-				setErrorMessage(err.response.data);
-			}
-		};
-		fetchMovie();
+		if (id) {
+			const fetchMovie = async () => {
+				try {
+					const result = await axios(`http://localhost:4000/movies/${id}`);
+					// console.log(result.data.movies);
+					// await setMovie(result.data.movie);
+					await setMovie((prevState) => {
+						return {
+							...prevState,
+							...result.data.movie,
+						};
+					});
+					setLoaded(true);
+				} catch (err) {
+					setErrorMessage(err.response.data);
+				}
+			};
+			fetchMovie();
+		}
 	}, [id]);
 	return (
 		<Fragment>

@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
+/* third party */
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import moment from 'moment';
+
+/* internal source */
 import Input from './form/Input';
 import Select from './form/Select';
 import TextArea from './form/TextArea';
 
 const MovieForm = () => {
+	let { id } = useParams();
 	const [movie, setMovie] = useState({
 		id: null,
 		title: '',
@@ -16,7 +23,6 @@ const MovieForm = () => {
 	});
 	const [loaded, setLoaded] = useState(false);
 	const [errorMessage, setErrorMessage] = useState(null);
-
 	const mpaaOptions = [
 		{
 			value: 'g',
@@ -39,6 +45,38 @@ const MovieForm = () => {
 			title: 'NC17',
 		},
 	];
+
+	useEffect(() => {
+		if (id) {
+			const fetchMovie = async () => {
+				try {
+					const result = await axios(`http://localhost:4000/movies/${id}`);
+					// convert date result to fit input format
+					result.data.movie.release_date = new Date(
+						result.data.movie.release_date
+					)
+						.toISOString()
+						.split('T')[0];
+					setMovie(result.data.movie);
+					setLoaded(true);
+				} catch (err) {
+					setErrorMessage(err.response.data);
+				}
+			};
+			fetchMovie();
+		} else {
+			setMovie({
+				id: null,
+				title: '',
+				description: '',
+				year: '',
+				release_date: '',
+				rating: '',
+				runtime: '',
+				mpaa_rating: '',
+			})
+		}
+	}, [id]);
 
 	const handleChange = (event) => {
 		const { name, value } = event.target;
@@ -94,14 +132,6 @@ const MovieForm = () => {
 					type={'text'}
 					name={'rating'}
 					value={movie.rating}
-					placeholder={'input your rating here'}
-					handleChange={handleChange}
-				/>
-				<Input
-					title={'Description'}
-					type={'textarea'}
-					name={'rating'}
-					value={movie.description}
 					placeholder={'input your rating here'}
 					handleChange={handleChange}
 				/>
