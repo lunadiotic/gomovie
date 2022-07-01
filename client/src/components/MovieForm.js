@@ -2,7 +2,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import moment from 'moment';
 
 /* internal source */
 import Input from './form/Input';
@@ -74,7 +73,7 @@ const MovieForm = () => {
 				rating: '',
 				runtime: '',
 				mpaa_rating: '',
-			})
+			});
 		}
 	}, [id]);
 
@@ -88,12 +87,31 @@ const MovieForm = () => {
 		});
 	};
 
+	const handleSubmit = (event) => {
+		event.preventDefault();
+		const data = new FormData(event.target);
+		const payload = Object.fromEntries(data.entries());
+		sendPostRequest(payload);
+	};
+
+	const sendPostRequest = async (payload) => {
+		try {
+			const result = await axios(
+				`http://localhost:4000/admin/movies`,
+				payload
+			);
+			console.log(result.data);
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
 	return (
 		<>
 			<h2>Movie</h2>
 			<hr />
 			<pre>{JSON.stringify(movie)}</pre>
-			<form action='post'>
+			<form onSubmit={handleSubmit}>
 				<Input
 					title={'Title'}
 					type={'text'}
@@ -139,13 +157,15 @@ const MovieForm = () => {
 					title={'Description'}
 					cols={null}
 					rows={3}
-					name={'rating'}
+					name={'description'}
 					value={movie.description}
 					placeholder={'input your rating description'}
 					handleChange={handleChange}
 				/>
 				<hr />
-				<button className='btn btn-primary mb-4'>Save</button>
+				<button className='btn btn-primary mb-4' type='submit'>
+					Save
+				</button>
 			</form>
 		</>
 	);
