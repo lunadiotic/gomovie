@@ -16,7 +16,7 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodGet, "/genres/", app.getAllGenres)
 	router.HandlerFunc(http.MethodGet, "/genres/:genre_id/movies/", app.getAllMoviesByGenre)
 
-	router.HandlerFunc(http.MethodGet, "/admin/movies/", app.insertMovie);
+	router.HandlerFunc(http.MethodPost, "/admin/movies/", app.insertMovie);
 
 	return app.enableCORS(router)
 }

@@ -87,23 +87,13 @@ const MovieForm = () => {
 		});
 	};
 
-	const handleSubmit = (event) => {
+	const handleSubmit = async (event) => {
 		event.preventDefault();
 		const data = new FormData(event.target);
 		const payload = Object.fromEntries(data.entries());
-		sendPostRequest(payload);
-	};
-
-	const sendPostRequest = async (payload) => {
-		try {
-			const result = await axios(
-				`http://localhost:4000/admin/movies`,
-				payload
-			);
-			console.log(result.data);
-		} catch (err) {
-			console.log(err);
-		}
+		
+		const result = await axios.post('http://localhost:4000/admin/movies', JSON.stringify(payload));
+		console.log(result.data)
 	};
 
 	return (
