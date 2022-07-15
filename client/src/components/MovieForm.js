@@ -2,156 +2,202 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 
 /* internal source */
-import Input from './form/Input';
-import Select from './form/Select';
-import TextArea from './form/TextArea';
+let rerender = 1;
 
 const MovieForm = () => {
+	const {
+		register,
+		formState: { errors },
+		handleSubmit,
+		setValue,
+	} = useForm();
+
 	let { id } = useParams();
-	const [movie, setMovie] = useState({
-		id: null,
-		title: '',
-		description: '',
-		year: '',
-		release_date: '',
-		rating: '',
-		runtime: '',
-		mpaa_rating: '',
-	});
-	const [loaded, setLoaded] = useState(false);
-	const [errorMessage, setErrorMessage] = useState(null);
+	const isAddMode = !id;
+
+	const fields = [
+		'id',
+		'title',
+		'description',
+		'year',
+		'release_date',
+		'runtime',
+		'rating',
+		'mpaa_rating',
+		'genres',
+	];
 	const mpaaOptions = [
 		{
-			value: 'g',
 			title: 'G',
 		},
 		{
-			value: 'pg',
 			title: 'PG',
 		},
 		{
-			value: 'pg13',
 			title: 'PG13',
 		},
 		{
-			value: 'r',
 			title: 'R',
 		},
 		{
-			value: 'nc17',
 			title: 'NC17',
 		},
 	];
 
-	useEffect(() => {
-		if (id) {
-			const fetchMovie = async () => {
-				try {
-					const result = await axios(`http://localhost:4000/movies/${id}`);
-					// convert date result to fit input format
-					result.data.movie.release_date = new Date(
-						result.data.movie.release_date
-					)
-						.toISOString()
-						.split('T')[0];
-					setMovie(result.data.movie);
-					setLoaded(true);
-				} catch (err) {
-					setErrorMessage(err.response.data);
-				}
-			};
-			fetchMovie();
-		} else {
-			setMovie({
-				id: null,
-				title: '',
-				description: '',
-				year: '',
-				release_date: '',
-				rating: '',
-				runtime: '',
-				mpaa_rating: '',
-			});
-		}
-	}, [id]);
+	const [loaded, setLoaded] = useState(false);
+	const [errorMessage, setErrorMessage] = useState(null);
 
-	const handleChange = (event) => {
-		const { name, value } = event.target;
-		setMovie((prevState) => {
-			return {
-				...prevState,
-				[name]: value,
-			};
-		});
+	const fetchMovie = async (id) => {
+		try {
+			const result = await axios(`http://localhost:4000/movies/${id}`);
+			// convert date result to fit input format
+			result.data.movie.release_date = new Date(result.data.movie.release_date)
+				.toISOString()
+				.split('T')[0];
+			setLoaded(true);
+			fields.forEach((field) => setValue(field, result.data.movie[field]));
+		} catch (err) {
+			setErrorMessage(err.response.data);
+		}
 	};
 
-	const handleSubmit = async (event) => {
-		event.preventDefault();
+	const resetForm = () => {
+		fields.forEach((field) => setValue(field, ''));
+	};
+
+	useEffect(() => {
+		if (!isAddMode) {
+			fetchMovie(id);
+		} else {
+			resetForm();
+		}
+	}, [isAddMode]);
+
+	const onSubmit = async (event) => {
 		const data = new FormData(event.target);
 		const payload = Object.fromEntries(data.entries());
-		
-		const result = await axios.post('http://localhost:4000/admin/movies', JSON.stringify(payload));
-		console.log(result.data)
+
+		const result = await axios.post(
+			'http://localhost:4000/admin/movies',
+			JSON.stringify(payload)
+		);
+		console.log(result.data);
 	};
 
 	return (
 		<>
+			{rerender++}
 			<h2>Movie</h2>
 			<hr />
-			<pre>{JSON.stringify(movie)}</pre>
-			<form onSubmit={handleSubmit}>
-				<Input
-					title={'Title'}
-					type={'text'}
-					name={'title'}
-					value={movie.title}
-					placeholder={'input your title here'}
-					handleChange={handleChange}
-				/>
-				<Input
-					title={'Release Date'}
-					type={'date'}
-					name={'release_date'}
-					value={movie.release_date}
-					placeholder={'input your release date here'}
-					handleChange={handleChange}
-				/>
-				<Input
-					title={'Year'}
-					type={'text'}
-					name={'year'}
-					value={movie.year}
-					placeholder={'input your year here'}
-					handleChange={handleChange}
-				/>
+			<pre>{rerender}</pre>
+			<form onSubmit={handleSubmit(onSubmit)}>
+				<div className='mb-3'>
+					<label htmlFor='' className='form-label'>
+						Title
+					</label>
+					<input
+						type='text'
+						className={`form-control ${errors.title && 'is-invalid'}`}
+						id='title'
+						name='title'
+						{...register('title', { required: true })}
+					/>
+					{errors.title && (
+						<div className='invalid-feedback'>Please input title.</div>
+					)}
+				</div>
+				<div className='mb-3'>
+					<label htmlFor='' className='form-label'>
+						Release Date
+					</label>
+					<input
+						type='date'
+						className={`form-control ${errors.release_date && 'is-invalid'}`}
+						id='release_date'
+						name='release_date'
+						{...register('release_date', { required: true })}
+					/>
+					{errors.release_date && (
+						<div className='invalid-feedback'>Please input release date.</div>
+					)}
+				</div>
+				<div className='mb-3'>
+					<label htmlFor='' className='form-label'>
+						Year
+					</label>
+					<input
+						type='text'
+						className={`form-control ${errors.year && 'is-invalid'}`}
+						id='year'
+						name='year'
+						{...register('year', { required: true })}
+					/>
+					{errors.year && (
+						<div className='invalid-feedback'>Please input year.</div>
+					)}
+				</div>
+				<div className='mb-3'>
+					<label htmlFor='' className='form-label'>
+						MPAA Rating
+					</label>
+					<select
+						className={`form-control ${errors.mpaa_rating && 'is-invalid'}`}
+						id='mpaa_rating'
+						name='mpaa_rating'
+						{...register('mpaa_rating', { required: true })}
+					>
+						{mpaaOptions.map((option, index) => {
+							return (
+								<option
+									className='form-select'
+									key={index}
+									value={option.title}
+								>
+									{option.title}
+								</option>
+							);
+						})}
+					</select>
 
-				<Select
-					title={'MPAA Rating'}
-					name={'mpaa_rating'}
-					value={movie.mpaa_rating}
-					placeholder={'-'}
-					handleChange={handleChange}
-					options={mpaaOptions}
-				/>
-				<Input
-					title={'Rating'}
-					type={'text'}
-					name={'rating'}
-					value={movie.rating}
-					placeholder={'input your rating here'}
-					handleChange={handleChange}
-				/>
-				<TextArea
-					title={'Description'}
-					cols={null}
-					rows={3}
-					name={'description'}
-					value={movie.description}
-					placeholder={'input your rating description'}
-					handleChange={handleChange}
-				/>
+					{errors.mpaa_rating && (
+						<div className='invalid-feedback'>Please input MPAA Rating.</div>
+					)}
+				</div>
+				<div className='mb-3'>
+					<label htmlFor='' className='form-label'>
+						Rating
+					</label>
+					<input
+						type='text'
+						className={`form-control ${errors.rating && 'is-invalid'}`}
+						id='rating'
+						name='rating'
+						{...register('rating', { required: true })}
+					/>
+					{errors.rating && (
+						<div className='invalid-feedback'>Please input rating.</div>
+					)}
+				</div>
+				<div className='mb-3'>
+					<label htmlFor='' className='form-label'>
+						Description
+					</label>
+					<textarea
+						cols='10'
+						rows='3'
+						className={`form-control ${errors.description && 'is-invalid'}`}
+						id='description'
+						name='description'
+						{...register('description', { required: true })}
+					/>
+
+					{errors.description && (
+						<div className='invalid-feedback'>Please input description.</div>
+					)}
+				</div>
 				<hr />
 				<button className='btn btn-primary mb-4' type='submit'>
 					Save
