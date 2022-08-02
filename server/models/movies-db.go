@@ -179,3 +179,30 @@ func (m *DBModel) GetGenresAll() ([]*Genre, error) {
 	}
 	return genres, nil
 }
+
+// Get returns one movie and error if any
+func (m *DBModel) InsertMovie(movie Movie) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `insert into movies (title, description, year, release_date, runtime, rating, mpaa_rating, created_at, updated_at) values ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
+
+	_, err := m.DB.ExecContext(ctx, query,
+		movie.Title,
+		movie.Description,
+		movie.Year,
+		movie.ReleaseDate,
+		movie.Runtime,
+		movie.Rating,
+		movie.MPAARating,
+		movie.CreatedAt,
+		movie.UpdatedAt,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}

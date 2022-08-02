@@ -5,7 +5,6 @@ import { useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 
 /* internal source */
-let rerender = 1;
 
 const MovieForm = () => {
 	const {
@@ -22,7 +21,7 @@ const MovieForm = () => {
 		'id',
 		'title',
 		'description',
-		'year',
+		'runtime',
 		'release_date',
 		'runtime',
 		'rating',
@@ -76,23 +75,18 @@ const MovieForm = () => {
 		}
 	}, [isAddMode]);
 
-	const onSubmit = async (event) => {
-		const data = new FormData(event.target);
-		const payload = Object.fromEntries(data.entries());
-
+	const onSubmit = async (data) => {
 		const result = await axios.post(
-			'http://localhost:4000/admin/movies',
-			JSON.stringify(payload)
+			'http://localhost:4000/admin/movies/edit',
+			JSON.stringify(data)
 		);
 		console.log(result.data);
 	};
 
 	return (
 		<>
-			{rerender++}
 			<h2>Movie</h2>
 			<hr />
-			<pre>{rerender}</pre>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<div className='mb-3'>
 					<label htmlFor='' className='form-label'>
@@ -126,14 +120,14 @@ const MovieForm = () => {
 				</div>
 				<div className='mb-3'>
 					<label htmlFor='' className='form-label'>
-						Year
+						Runtime
 					</label>
 					<input
-						type='text'
-						className={`form-control ${errors.year && 'is-invalid'}`}
-						id='year'
-						name='year'
-						{...register('year', { required: true })}
+						type='number'
+						className={`form-control ${errors.runtime && 'is-invalid'}`}
+						id='runtime'
+						name='runtime'
+						{...register('runtime', { required: true })}
 					/>
 					{errors.year && (
 						<div className='invalid-feedback'>Please input year.</div>
@@ -171,7 +165,7 @@ const MovieForm = () => {
 						Rating
 					</label>
 					<input
-						type='text'
+						type='number'
 						className={`form-control ${errors.rating && 'is-invalid'}`}
 						id='rating'
 						name='rating'
