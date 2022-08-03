@@ -102,15 +102,18 @@ func (app *application) updateMovie(w http.ResponseWriter, r *http.Request) {
 	var payload MoviePayload
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
-		log.Println(err)
 		app.errorJSON(w, err)
 		return
 	}
 
-	log.Println(payload.Title)
-	log.Println(payload.Year)
-
 	var movie models.Movie
+
+	if payload.ID != "" {
+		id, _ := strconv.Atoi(payload.ID)
+		m, _ := app.models.DB.Get(id)
+		movie = *m
+		movie.UpdatedAt = time.Now()
+	}
 
 	movie.ID, _ = strconv.Atoi(payload.ID)
 	movie.Title = payload.Title
@@ -123,17 +126,25 @@ func (app *application) updateMovie(w http.ResponseWriter, r *http.Request) {
 	movie.CreatedAt = time.Now()
 	movie.UpdatedAt = time.Now()
 
-	log.Println(movie.Year)
-
-	err = app.models.DB.InsertMovie(movie)
-	if err != nil {
-		app.errorJSON(w, err)
-		return
+	if movie.ID == 0 {
+		err = app.models.DB.InsertMovie(movie)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+	} else {
+		log.Println(movie)
+		err = app.models.DB.UpdateMovie(movie)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
 	}
 
 	type jsonRes struct {
 		OK bool `json:"ok"`
 	}
+
 	ok := jsonRes{
 		OK: true,
 	}

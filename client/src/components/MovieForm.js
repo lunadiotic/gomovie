@@ -76,9 +76,13 @@ const MovieForm = () => {
 	}, [isAddMode]);
 
 	const onSubmit = async (data) => {
+		let dataJSON = JSON.stringify(data, (k, v) =>
+			v && typeof v === 'object' ? v : '' + v
+		);
+		let payload = JSON.parse(dataJSON);
 		const result = await axios.post(
 			'http://localhost:4000/admin/movies/edit',
-			JSON.stringify(data)
+			JSON.stringify(payload)
 		);
 		console.log(result.data);
 	};
