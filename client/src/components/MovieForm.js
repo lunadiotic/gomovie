@@ -1,12 +1,15 @@
 /* third party */
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 /* internal source */
 
 const MovieForm = () => {
+	let navigate = useNavigate();
 	const {
 		register,
 		formState: { errors },
@@ -85,6 +88,34 @@ const MovieForm = () => {
 			JSON.stringify(payload)
 		);
 		console.log(result.data);
+	};
+
+	const deleteMovie = async (id) => {
+		const payload = {
+			id: id,
+		};
+		await axios.post(
+			'http://localhost:4000/admin/movies/delete',
+			JSON.stringify(payload)
+		);
+		navigate('/movies', { replace: true });
+	};
+
+	const confirmDelete = (e) => {
+		confirmAlert({
+			title: 'Delete Movie',
+			message: 'Are you sure to do this?',
+			buttons: [
+				{
+					label: 'Yes',
+					onClick: () => deleteMovie(id),
+				},
+				{
+					label: 'No',
+					onClick: () => alert('Click No'),
+				},
+			],
+		});
 	};
 
 	return (
@@ -197,9 +228,18 @@ const MovieForm = () => {
 					)}
 				</div>
 				<hr />
-				<button className='btn btn-primary mb-4' type='submit'>
+				<button className='btn btn-primary mb-4 mx-2' type='submit'>
 					Save
 				</button>
+				{!isAddMode && (
+					<button
+						className='btn btn-danger mb-4'
+						onClick={() => confirmDelete()}
+						type='button'
+					>
+						Delete
+					</button>
+				)}
 			</form>
 		</>
 	);

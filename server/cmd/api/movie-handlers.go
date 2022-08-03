@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 	"server/models"
 	"strconv"
@@ -11,6 +10,10 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 )
+
+type jsonRes struct {
+	OK bool `json:"ok"`
+}
 
 func (app *application) getOneMovie(w http.ResponseWriter, r *http.Request) {
 	params := httprouter.ParamsFromContext(r.Context())
@@ -72,9 +75,6 @@ func (app *application) searchMovie(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) insertMovie(w http.ResponseWriter, r *http.Request) {
-	type jsonRes struct {
-		OK bool `json:"ok"`
-	}
 
 	ok := jsonRes{
 		OK: true,
@@ -133,16 +133,11 @@ func (app *application) updateMovie(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else {
-		log.Println(movie)
 		err = app.models.DB.UpdateMovie(movie)
 		if err != nil {
 			app.errorJSON(w, err)
 			return
 		}
-	}
-
-	type jsonRes struct {
-		OK bool `json:"ok"`
 	}
 
 	ok := jsonRes{
@@ -157,6 +152,28 @@ func (app *application) updateMovie(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) deleteMovie(w http.ResponseWriter, r *http.Request) {
+	var payload MoviePayload
+	err := json.NewDecoder(r.Body).Decode(&payload)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	var id, _ = strconv.Atoi(payload.ID)
+	err = app.models.DB.DeleteMovie(id)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	ok := jsonRes{
+		OK: true,
+	}
+	err = app.writeJSON(w, http.StatusOK, ok, "response")
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
 
 }
 
